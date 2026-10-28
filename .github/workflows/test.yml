@@ -39,7 +39,7 @@ jobs:
         run: pytest -q
       - name: CLI smoke test
         run: |
-          adb-lan-fix version
+          adb-lan-fix --version
           adb-lan-fix status
       - name: JS syntax check
         run: |

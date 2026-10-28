@@ -437,7 +437,11 @@ def connect(serial: str) -> list[str]:
 
 def exec_adb(argv: list[str]) -> int:
     """Rewrite argv and hand off to the real adb. Used by the CLI entry point."""
-    real = find_real_adb()
+    try:
+        real = find_real_adb()
+    except FileNotFoundError as exc:
+        sys.stderr.write(f"adb-lan-fix: {exc}\n")
+        return 1
 
     if not is_supported_platform():
         os.execv(real, [real, *argv])
@@ -455,7 +459,13 @@ def exec_adb(argv: list[str]) -> int:
 
     env = os.environ.copy()
     env.update(env_overrides)
-    os.execve(real, [real, *new_argv], env)
+    try:
+        os.execve(real, [real, *new_argv], env)
+    except OSError as exc:
+        # execve only fails if the binary vanished between the lookup and now,
+        # but a traceback here would look like a crash in this package.
+        sys.stderr.write(f"adb-lan-fix: cannot run {real}: {exc}\n")
+        return 1
     return 0
 
 
