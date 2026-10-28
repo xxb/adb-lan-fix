@@ -2,6 +2,8 @@
 
 **Make `adb` reach LAN devices on macOS again.**
 
+[![test](https://github.com/xxb/adb-lan-fix/actions/workflows/test.yml/badge.svg)](https://github.com/xxb/adb-lan-fix/actions/workflows/test.yml)
+
 On macOS 15+, `adb connect 192.168.1.50:5555` fails with `No route to host` even
 though the device is reachable, debugging is enabled, and you granted every
 permission the system asked for. This package fixes that, transparently.
