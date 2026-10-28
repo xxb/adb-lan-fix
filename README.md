@@ -9,12 +9,20 @@ though the device is reachable, debugging is enabled, and you granted every
 permission the system asked for. This package fixes that, transparently.
 
 ```bash
-pip install adb-lan-fix
+pip install git+https://github.com/xxb/adb-lan-fix
 adb-lan-fix install
-adb-lan-fix connect 192.168.1.50:5555
 ```
 
-Your existing scripts keep working. Same serials, same commands, no changes.
+That is the whole setup. After it, a bare `adb` works in **every project on the
+machine** — same serials, same commands, no changes to your scripts, no PATH
+editing, no per-project configuration. Other projects do not need to know this
+exists.
+
+```bash
+cd ~/any/other/project
+adb connect 192.168.1.50:5555     # just works
+adb devices
+```
 
 ---
 
@@ -66,16 +74,20 @@ pip install adb-lan-fix
 adb-lan-fix install
 ```
 
-`install` registers a launchd job so the daemon starts at login and restarts if
-it crashes. Nothing else to configure.
+`install` does two things:
 
-Optionally, put an `adb` launcher on your PATH so interactive shells get the fix
-too:
+1. Registers a launchd job so the daemon starts at login and restarts if it
+   crashes.
+2. Writes an `adb` launcher into `~/.local/bin`, which sits ahead of Homebrew and
+   `/usr/bin` on a default macOS PATH. The launcher points at a dedicated
+   virtualenv under `~/.local/state/adb-lan-fix/venv`, so it keeps working even
+   if you move or delete the checkout you installed from.
 
-```bash
-adb-lan-fix install --bin-dir ~/.local/bin
-export PATH="$HOME/.local/bin:$PATH"   # add to ~/.zshrc
-```
+`install` tells you if the launcher will not win on PATH (for example if your
+shell puts Homebrew first), and what to do about it.
+
+Use `--no-launcher` to install only the daemon, or `--bin-dir DIR` to put the
+launcher somewhere else.
 
 ## Use
 
