@@ -29,6 +29,15 @@ LAUNCH_AGENT = (
     Path.home() / "Library" / "LaunchAgents" / f"{LAUNCH_AGENT_LABEL}.plist"
 )
 
+# Global launcher directory. Sits ahead of Homebrew and /usr/bin on a default
+# macOS PATH, so a bare `adb` resolves to this package in every project.
+LAUNCHER_DIR = Path.home() / ".local" / "bin"
+
+# Dedicated virtualenv for the launcher, so it keeps working if the checkout it
+# was installed from is moved or deleted.
+VENV_DIR = STATE_DIR / "venv"
+VENV_PYTHON = VENV_DIR / "bin" / "python"
+
 # Loopback ports handed out to forwarders. Kept high and narrow so collisions
 # with common dev servers are unlikely.
 FORWARD_PORT_BASE = 15000
